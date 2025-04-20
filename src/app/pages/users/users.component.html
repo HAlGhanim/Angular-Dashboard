@@ -1,0 +1,57 @@
+<app-modal>
+  <div class="text-center">
+    <h2 class="text-lg font-semibold mb-4">Confirm Soft Delete</h2>
+    <p class="mb-6">
+      Are you sure you want to set this user's status to inactive?
+    </p>
+    <div class="flex justify-center gap-4">
+      <button
+        (click)="softDeleteConfirmed()"
+        class="bg-red-500 text-white px-4 py-2 rounded"
+      >
+        Yes
+      </button>
+      <button
+        (click)="cancel()"
+        class="bg-gray-300 text-black px-4 py-2 rounded"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+</app-modal>
+
+<div class="bg-white p-6 rounded-lg shadow">
+  <h2 class="text-xl font-semibold mb-4">User Management</h2>
+  <table class="w-full table-auto text-left border border-gray-200">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="p-3">Name</th>
+        <th class="p-3">Email</th>
+        <th class="p-3">Role</th>
+        <th class="p-3">Status</th>
+        <th class="p-3 text-center">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (user of users(); track user.id) {
+      <tr class="border-t">
+        <td class="p-3">{{ user.name }}</td>
+        <td class="p-3">{{ user.email }}</td>
+        <td class="p-3 capitalize">{{ user.role }}</td>
+        <td class="p-3">
+          <app-status-badge [status]="user.status" />
+        </td>
+        <td class="p-3 text-center">
+          <button
+            class="text-red-500 hover:underline"
+            (click)="confirmSoftDelete(user.id)"
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

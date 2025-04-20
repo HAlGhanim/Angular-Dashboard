@@ -1,0 +1,13 @@
+<div class="fixed top-4 right-4 space-y-2 z-50">
+  @if (toasts().length > 0) { @for (toast of toasts(); track toast.id) {
+  <div
+    class="px-4 py-2 rounded shadow text-white"
+    [ngClass]="{
+      'bg-green-500': toast.type === 'SUCCESS',
+      'bg-red-500': toast.type === 'ERROR'
+    }"
+  >
+    {{ toast.message }}
+  </div>
+  } }
+</div>

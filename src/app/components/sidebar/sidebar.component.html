@@ -1,0 +1,29 @@
+<aside class="w-64 bg-white h-full shadow-md fixed z-40">
+  <div class="p-4 font-bold text-xl border-b border-gray-200">
+    3gangaz Admin Panel
+  </div>
+  <nav class="mt-4 flex flex-col space-y-2 px-4">
+    <a
+      routerLink="/"
+      routerLinkActive="bg-gray-200"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="px-4 py-2 rounded hover:bg-gray-100 transition"
+    >
+      Dashboard
+    </a>
+    <a
+      routerLink="/users"
+      routerLinkActive="bg-gray-200"
+      class="px-4 py-2 rounded hover:bg-gray-100 transition"
+    >
+      Users
+    </a>
+    <a
+      routerLink="/products"
+      routerLinkActive="bg-gray-200"
+      class="px-4 py-2 rounded hover:bg-gray-100 transition"
+    >
+      Products
+    </a>
+  </nav>
+</aside>

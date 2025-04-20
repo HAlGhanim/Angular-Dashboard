@@ -1,0 +1,88 @@
+<app-modal>
+  <div class="text-center">
+    <h2 class="text-lg font-semibold mb-4">Confirm Archive</h2>
+    <p class="mb-6">Are you sure you want to archive this product?</p>
+    <div class="flex justify-center gap-4">
+      <button
+        (click)="archiveConfirmed()"
+        class="bg-red-500 text-white px-4 py-2 rounded"
+      >
+        Yes
+      </button>
+      <button
+        (click)="cancel()"
+        class="bg-gray-300 text-black px-4 py-2 rounded"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+</app-modal>
+
+<div class="bg-white p-6 rounded-md shadow">
+  <h2 class="text-xl font-semibold mb-4">Product Management</h2>
+  <div class="rounded-md border">
+    <table class="w-full text-sm text-left">
+      <thead class="bg-gray-50 rounded-md border">
+        <tr class="rounded-md border">
+          <th class="p-4">Product</th>
+          <th class="p-4">Category</th>
+          <th class="p-4">Stock</th>
+          <th class="p-4">Status</th>
+          <th class="p-4 text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (product of products(); track product.id) {
+        <tr class="border rounded-md hover:bg-gray-50">
+          <td class="p-4 font-medium">{{ product.name }}</td>
+          <td class="p-4">{{ product.category }}</td>
+          <td class="p-4">{{ product.stock }}</td>
+          <td class="p-4">
+            <app-status-badge [status]="product.status" />
+          </td>
+          <td class="p-4 text-center relative">
+            <div
+              class="relative inline-block text-left"
+              (click)="$event.stopPropagation()"
+            >
+              <button
+                (click)="toggleDropdown(product.id)"
+                class="text-gray-500 hover:text-gray-700 text-2xl"
+              >
+                &#x22EF;
+              </button>
+              @if (dropdownOpenId() === product.id) {
+              <div
+                class="absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white border z-50"
+              >
+                <div class="py-1 text-sm">
+                  <button
+                    class="w-full text-left px-4 py-2 hover:bg-gray-100"
+                    (click)="setOutOfStock(product.id)"
+                  >
+                    Out of Stock
+                  </button>
+                  <button
+                    class="w-full text-left px-4 py-2 hover:bg-gray-100"
+                    (click)="setInStock(product.id)"
+                  >
+                    In Stock
+                  </button>
+                  <button
+                    class="w-full text-left px-4 py-2 hover:bg-red-100 text-red-600"
+                    (click)="confirmArchive(product.id)"
+                  >
+                    Archive
+                  </button>
+                </div>
+              </div>
+              }
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
