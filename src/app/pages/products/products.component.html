@@ -19,30 +19,152 @@
   </div>
 </app-modal>
 
-<div class="bg-white p-6 rounded-md shadow">
-  <h2 class="text-xl font-semibold mb-4">Product Management</h2>
-  <div class="rounded-md border">
+<div class="bg-white p-6 rounded-md shadow space-y-4">
+  <div class="flex justify-between items-center gap-4 flex-wrap">
+    <input
+      type="text"
+      placeholder="Search..."
+      (input)="updateQuery($any($event.target).value)"
+      class="border px-3 py-2 rounded w-full md:w-64"
+    />
+
+    <div class="flex gap-4">
+      <p class="mt-1">Filter By Category:</p>
+      <select
+        (change)="updateCategory($any($event.target).value)"
+        class="border px-2 py-1 rounded"
+      >
+        <option value="all">All</option>
+        <option value="Electronics">Electronics</option>
+        <option value="Apparel">Apparel</option>
+        <option value="Furniture">Furniture</option>
+      </select>
+    </div>
+
+    <div class="flex gap-4">
+      <p class="mt-1">Filter By Status:</p>
+      <select
+        (change)="updateStatus($any($event.target).value)"
+        class="border px-2 py-1 rounded"
+      >
+        <option value="all">All</option>
+        <option value="available">Available</option>
+        <option value="out-of-stock">Out of Stock</option>
+        <option value="archived">Archived</option>
+      </select>
+    </div>
+
+    <div class="flex gap-4">
+      Products per page:
+      <select
+        (change)="setPerPage($any($event.target).value)"
+        class="border pl-2 rounded"
+      >
+        <option [selected]="perPage() === 5" value="5">5</option>
+        <option [selected]="perPage() === 10" value="10">10</option>
+        <option [selected]="perPage() === 20" value="20">20</option>
+      </select>
+    </div>
+
+    <div class="relative">
+      <button
+        (click)="toggleColumnDropdown()"
+        class="border rounded px-3 py-2 bg-white shadow-sm"
+      >
+        Toggle Columns
+      </button>
+      @if (showColumnDropdown()) {
+      <div
+        class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white border z-50"
+      >
+        <ul class="text-sm p-2 space-y-1">
+          @for (col of allColumns; track col) {
+          <li>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                [checked]="visibleColumns().includes(col)"
+                (change)="toggleColumn(col)"
+              />
+              {{ col }}
+            </label>
+          </li>
+          }
+        </ul>
+      </div>
+      }
+    </div>
+  </div>
+
+  <div class="rounded-md border overflow-auto">
     <table class="w-full text-sm text-left">
       <thead class="bg-gray-50 rounded-md border">
         <tr class="rounded-md border">
-          <th class="p-4">Product</th>
-          <th class="p-4">Category</th>
+          @if (visibleColumns().includes('image')) {
+          <th class="p-4">Image</th>
+          } @if (visibleColumns().includes('name')) {
+          <th class="p-4">Name</th>
+          } @if (visibleColumns().includes('description')) {
+          <th class="p-4">Description</th>
+          } @if (visibleColumns().includes('price')) {
+          <th class="p-4">Price</th>
+          } @if (visibleColumns().includes('rating')) {
+          <th class="p-4">Rating</th>
+          } @if (visibleColumns().includes('stock')) {
           <th class="p-4">Stock</th>
+          } @if (visibleColumns().includes('category')) {
+          <th class="p-4">Category</th>
+          } @if (visibleColumns().includes('status')) {
           <th class="p-4">Status</th>
+          } @if (visibleColumns().includes('tags')) {
+          <th class="p-4">Tags</th>
+          } @if (visibleColumns().includes('createdAt')) {
+          <th class="p-4">Created</th>
+          } @if (visibleColumns().includes('updatedAt')) {
+          <th class="p-4">Updated</th>
+          }
           <th class="p-4 text-center">Actions</th>
         </tr>
       </thead>
       <tbody>
-        @for (product of products(); track product.id) {
-        <tr class="border rounded-md hover:bg-gray-50">
+        @for (product of filteredProducts(); track product.id) {
+        <tr class="border hover:bg-gray-50">
+          @if (visibleColumns().includes('image')) {
+          <td class="p-4">
+            <img
+              [src]="product.imageUrl"
+              alt="Product Image"
+              class="w-12 h-12 rounded object-cover"
+            />
+          </td>
+          } @if (visibleColumns().includes('name')) {
           <td class="p-4 font-medium">{{ product.name }}</td>
-          <td class="p-4">{{ product.category }}</td>
+          } @if (visibleColumns().includes('description')) {
+          <td class="p-4 text-sm text-gray-600 truncate max-w-xs">
+            {{ product.description }}
+          </td>
+          } @if (visibleColumns().includes('price')) {
+          <td class="p-4">${{ product.price.toFixed(2) }}</td>
+          } @if (visibleColumns().includes('rating')) {
+          <td class="p-4">⭐ {{ product.rating }}</td>
+          } @if (visibleColumns().includes('stock')) {
           <td class="p-4">{{ product.stock }}</td>
+          } @if (visibleColumns().includes('category')) {
+          <td class="p-4">{{ product.category }}</td>
+          } @if (visibleColumns().includes('status')) {
           <td class="p-4">
             <app-status-badge [status]="product.status" />
           </td>
+          } @if (visibleColumns().includes('tags')) {
+          <td class="p-4 text-xs">{{ product.tags.join(", ") }}</td>
+          } @if (visibleColumns().includes('createdAt')) {
+          <td class="p-4">{{ product.createdAt | date : "mediumDate" }}</td>
+          } @if (visibleColumns().includes('updatedAt')) {
+          <td class="p-4">{{ product.updatedAt | date : "mediumDate" }}</td>
+          }
           <td class="p-4 text-center relative">
             <div
+              #dropdownRef
               class="relative inline-block text-left"
               (click)="$event.stopPropagation()"
             >
@@ -59,15 +181,15 @@
                 <div class="py-1 text-sm">
                   <button
                     class="w-full text-left px-4 py-2 hover:bg-gray-100"
-                    (click)="setOutOfStock(product.id)"
-                  >
-                    Out of Stock
-                  </button>
-                  <button
-                    class="w-full text-left px-4 py-2 hover:bg-gray-100"
                     (click)="setInStock(product.id)"
                   >
                     In Stock
+                  </button>
+                  <button
+                    class="w-full text-left px-4 py-2 hover:bg-gray-100"
+                    (click)="setOutOfStock(product.id)"
+                  >
+                    Out of Stock
                   </button>
                   <button
                     class="w-full text-left px-4 py-2 hover:bg-red-100 text-red-600"
@@ -84,5 +206,18 @@
         }
       </tbody>
     </table>
+  </div>
+
+  <div class="flex justify-end mt-4 gap-2">
+    @for (page of pageNumbers(); track page) {
+    <button
+      (click)="setPage(page)"
+      class="px-3 py-1 rounded border hover:bg-blue-100"
+      [class.bg-blue-500]="currentPage() === page"
+      [class.text-white]="currentPage() === page"
+    >
+      {{ page }}
+    </button>
+    }
   </div>
 </div>

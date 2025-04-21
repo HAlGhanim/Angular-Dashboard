@@ -1,4 +1,5 @@
 <app-modal>
+  @if (modalService.type() === 'delete') {
   <div class="text-center">
     <h2 class="text-lg font-semibold mb-4">Confirm Soft Delete</h2>
     <p class="mb-6">
@@ -19,11 +20,104 @@
       </button>
     </div>
   </div>
+  } @if (modalService.type() === 'edit') {
+  <div class="text-center space-y-4">
+    <h2 class="text-lg font-semibold">Edit User</h2>
+    <form
+      (ngSubmit)="submitEdit()"
+      [formGroup]="editForm"
+      class="space-y-4 text-left"
+    >
+      <div>
+        <label>Name</label>
+        <input
+          type="text"
+          formControlName="name"
+          class="w-full border rounded px-2 py-1"
+        />
+      </div>
+      <div>
+        <label>Email</label>
+        <input
+          type="email"
+          formControlName="email"
+          class="w-full border rounded px-2 py-1"
+        />
+      </div>
+      <div>
+        <label>Role</label>
+        <select formControlName="role" class="w-full border rounded px-2 py-1">
+          <option value="admin">Admin</option>
+          <option value="customer">Customer</option>
+          <option value="manager">Manager</option>
+        </select>
+      </div>
+      <div class="flex justify-end gap-4">
+        <button
+          type="button"
+          (click)="cancel()"
+          class="bg-gray-300 px-4 py-2 rounded"
+        >
+          Cancel
+        </button>
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
+          Update
+        </button>
+      </div>
+    </form>
+  </div>
+  }
 </app-modal>
 
-<div class="bg-white p-6 rounded-lg shadow">
-  <h2 class="text-xl font-semibold mb-4">User Management</h2>
-  <table class="w-full table-auto text-left border border-gray-200">
+<div class="bg-white p-6 rounded-lg shadow space-y-4">
+  <div class="flex justify-between items-center gap-4 flex-wrap">
+    <input
+      type="text"
+      placeholder="Search..."
+      (input)="updateQuery($any($event.target).value)"
+      class="border px-3 py-2 rounded w-full md:w-64"
+    />
+
+    <div class="flex gap-4">
+      <p class="mt-1">Filter By Role:</p>
+      <select
+        (change)="updateRole($any($event.target).value)"
+        class="border px-2 py-1 rounded"
+      >
+        <option value="all">All</option>
+        <option value="admin">Admin</option>
+        <option value="customer">Customer</option>
+        <option value="manager">Manager</option>
+      </select>
+    </div>
+
+    <div class="flex gap-4">
+      <p class="mt-1">Filter By Status:</p>
+      <select
+        (change)="updateStatus($any($event.target).value)"
+        class="border px-2 py-1 rounded"
+      >
+        <option value="all">All</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+        <option value="banned">Banned</option>
+      </select>
+    </div>
+
+    <div class="flex gap-4">
+      <p class="mt-1">Users per page:</p>
+      <select
+        (change)="setPerPage($any($event.target).value)"
+        class="border px-2 py-1 rounded"
+      >
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+      </select>
+    </div>
+  </div>
+
+  <table class="w-full table-auto text-left border">
     <thead class="bg-gray-100">
       <tr>
         <th class="p-3">Name</th>
@@ -34,7 +128,7 @@
       </tr>
     </thead>
     <tbody>
-      @for (user of users(); track user.id) {
+      @for (user of filteredUsers(); track user.id) {
       <tr class="border-t">
         <td class="p-3">{{ user.name }}</td>
         <td class="p-3">{{ user.email }}</td>
@@ -44,7 +138,13 @@
         </td>
         <td class="p-3 text-center">
           <button
-            class="text-red-500 hover:underline"
+            class="text-blue-500 font-bold hover:underline mr-4"
+            (click)="startEdit(user)"
+          >
+            Edit
+          </button>
+          <button
+            class="text-red-500 font-bold hover:underline"
             (click)="confirmSoftDelete(user.id)"
           >
             Delete
@@ -54,4 +154,17 @@
       }
     </tbody>
   </table>
+
+  <div class="flex justify-end mt-4 gap-2">
+    @for (page of pageNumbers(); track page) {
+    <button
+      (click)="setPage(page)"
+      class="px-3 py-1 rounded border hover:bg-blue-100"
+      [class.bg-blue-500]="currentPage() === page"
+      [class.text-white]="currentPage() === page"
+    >
+      {{ page }}
+    </button>
+    }
+  </div>
 </div>

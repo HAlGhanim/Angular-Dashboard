@@ -1,1 +1,50 @@
-<p>form works!</p>
+<button (click)="openModal()" class="px-4 py-2 bg-blue-500 text-white rounded">
+  Open Form
+</button>
+
+@if (showModal) {
+<div
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+>
+  <div class="bg-white p-6 rounded shadow-md w-full max-w-md space-y-4">
+    <h2 class="text-xl font-semibold">Fill the Form</h2>
+
+    <form [formGroup]="form" (ngSubmit)="submitForm()" class="space-y-4">
+      <div>
+        <label class="block mb-1">Name</label>
+        <input
+          type="text"
+          formControlName="name"
+          class="w-full px-3 py-2 border rounded"
+        />
+      </div>
+
+      <div>
+        <label class="block mb-1">Email</label>
+        <input
+          type="email"
+          formControlName="email"
+          class="w-full px-3 py-2 border rounded"
+        />
+      </div>
+
+      <div class="flex justify-end gap-2 pt-4">
+        <button
+          type="button"
+          (click)="closeModal()"
+          class="px-4 py-2 bg-gray-300 rounded"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          [disabled]="form.invalid"
+          class="px-4 py-2 bg-green-500 text-white rounded"
+        >
+          Submit
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+}
