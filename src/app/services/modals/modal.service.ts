@@ -3,12 +3,12 @@ import { Injectable, signal } from '@angular/core';
 @Injectable({ providedIn: 'root' })
 export class ModalService {
   private isOpen = signal(false);
-  private modalType = signal<'edit' | 'delete' | null>(null);
+  private modalType = signal<'edit' | 'archive' | null>(null);
 
   modalState = this.isOpen.asReadonly();
   type = this.modalType.asReadonly();
 
-  open(type: 'edit' | 'delete') {
+  open(type: 'edit' | 'archive') {
     this.modalType.set(type);
     this.isOpen.set(true);
   }
@@ -18,7 +18,7 @@ export class ModalService {
     this.modalType.set(null);
   }
 
-  toggle(type: 'edit' | 'delete') {
+  toggle(type: 'edit' | 'archive') {
     this.modalType.set(type);
     this.isOpen.update((v) => !v);
   }

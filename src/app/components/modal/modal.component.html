@@ -2,13 +2,15 @@
 <div
   class="fixed inset-0 z-40 flex items-center justify-center bg-black/30 backdrop-blur-sm"
 >
-  <div class="bg-white p-6 rounded shadow-lg w-full max-w-md">
-    <div class="flex justify-between items-center mb-4">
-      <h3 class="text-lg font-semibold">Modal Title</h3>
-      <button (click)="close()" class="text-gray-600 hover:text-gray-800">
-        &times;
-      </button>
-    </div>
+  <div class="bg-white p-6 rounded shadow-lg w-full max-w-md relative">
+    <button
+      (click)="close()"
+      class="absolute top-4 right-3 text-2xl text-gray-600 hover:text-gray-800"
+      aria-label="Close modal"
+    >
+      &times;
+    </button>
+
     <ng-content></ng-content>
   </div>
 </div>

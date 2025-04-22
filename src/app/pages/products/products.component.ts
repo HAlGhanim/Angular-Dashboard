@@ -161,7 +161,7 @@ export class ProductsComponent {
   confirmArchive(id: number) {
     this.selectedProductId.set(id);
     this.dropdownOpenId.set(null);
-    this.modalService.open('delete');
+    this.modalService.open('archive');
   }
 
   archiveConfirmed() {

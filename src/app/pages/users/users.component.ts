@@ -25,6 +25,18 @@ import { User } from '../../../data/users';
   templateUrl: './users.component.html',
 })
 export class UsersComponent {
+  allColumns = [
+    'avatar',
+    'name',
+    'email',
+    'role',
+    'status',
+    'Email Verified',
+    'lastLogin',
+    'createdAt',
+  ];
+  visibleColumns = signal<string[]>([...this.allColumns]);
+  showColumnDropdown = signal(false);
   allUsers = computed(() => this.userService.usersSignal());
   selectedUserId = signal<number | null>(null);
   searchQuery = signal('');
@@ -41,6 +53,11 @@ export class UsersComponent {
       'customer',
       Validators.required
     ),
+    status: new FormControl<'active' | 'inactive' | 'banned'>(
+      'active',
+      Validators.required
+    ),
+    isEmailVerified: new FormControl<boolean>(true, Validators.required),
   });
 
   filteredUsers = computed(() => {
@@ -90,7 +107,7 @@ export class UsersComponent {
 
   confirmSoftDelete(id: number) {
     this.selectedUserId.set(id);
-    this.modalService.open('delete');
+    this.modalService.open('archive');
   }
 
   softDeleteConfirmed() {
@@ -101,6 +118,18 @@ export class UsersComponent {
       this.selectedUserId.set(null);
     }
     this.modalService.close();
+  }
+
+  toggleColumnDropdown() {
+    this.showColumnDropdown.update((open) => !open);
+  }
+
+  toggleColumn(column: string) {
+    this.visibleColumns.update((cols) =>
+      cols.includes(column)
+        ? cols.filter((c) => c !== column)
+        : [...cols, column]
+    );
   }
 
   cancel() {
@@ -139,6 +168,8 @@ export class UsersComponent {
       name: user.name,
       email: user.email,
       role: user.role,
+      status: user.status,
+      isEmailVerified: user.isEmailVerified,
     });
     this.modalService.open('edit');
   }

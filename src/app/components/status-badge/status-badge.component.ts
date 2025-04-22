@@ -14,7 +14,12 @@ export class StatusBadgeComponent {
     | 'banned'
     | 'available'
     | 'out-of-stock'
-    | 'archived' = 'active';
+    | 'archived'
+    | 'cancelled'
+    | 'pending'
+    | 'shipped'
+    | 'delivered'
+    | 'returned' = 'active';
 
   get color(): string {
     switch (this.status) {
@@ -30,6 +35,16 @@ export class StatusBadgeComponent {
         return 'bg-orange-500';
       case 'archived':
         return 'bg-gray-500';
+      case 'cancelled':
+        return 'bg-red-500';
+      case 'pending':
+        return 'bg-yellow-400';
+      case 'shipped':
+        return 'bg-blue-500';
+      case 'delivered':
+        return 'bg-green-500';
+      case 'returned':
+        return 'bg-purple-500';
       default:
         return 'bg-gray-300';
     }
